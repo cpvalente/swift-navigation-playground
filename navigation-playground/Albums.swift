@@ -1,10 +1,12 @@
 import SwiftUI
 
 struct Albums: View {
+    @Binding var path: NavigationPath
+
     let albums = ["aa", "bb", "cc", "dd"]
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             VStack {
                 List(albums, id: \.self) { album in
                     NavigationLink("Detail \(album)", value: album)
@@ -22,11 +24,13 @@ struct Albums: View {
     }
 }
 
+/*
 struct Albums_Previews: PreviewProvider {
     static var previews: some View {
         Albums()
     }
 }
+ */
 
 struct AlbumsDetail: View {
     let albumId: String

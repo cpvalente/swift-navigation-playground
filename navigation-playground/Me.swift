@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct Me: View {
+    @Binding var path: NavigationPath
+
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             VStack {
                 NavigationLink("Settings") {
                     Settings()
@@ -24,11 +26,15 @@ struct Me: View {
                     }
                 }
         }
+
     }
 }
 
+/*
 struct Me_Previews: PreviewProvider {
     static var previews: some View {
         Me()
     }
 }
+
+*/

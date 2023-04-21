@@ -1,11 +1,13 @@
 import SwiftUI
 
 struct Photos: View {
-    
+    @Binding var path: NavigationPath
+
     let photos = ["aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "ll", "mm"]
     
+    // "aa"
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             VStack {
                 List(photos, id: \.self) { photo in
                     NavigationLink("Detail \(photo)", value: photo)
@@ -25,12 +27,13 @@ struct Photos: View {
     }
 }
 
+/*
 struct Photos_Previews: PreviewProvider {
     static var previews: some View {
         Photos()
     }
 }
-
+*/
 
 struct PhotosDetail: View {
     @State private var isPresenting = false
