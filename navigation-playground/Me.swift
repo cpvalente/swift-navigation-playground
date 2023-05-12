@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct Me: View {
-    @Binding var path: NavigationPath
-
+    @State var path: [String]
+    
     var body: some View {
         NavigationStack(path: $path) {
             VStack {
@@ -25,6 +25,8 @@ struct Me: View {
                         Image(systemName: "gearshape")
                     }
                 }
+        }.onChange(of: path) { newValue in
+            print("me: path changed \(newValue)")
         }
 
     }

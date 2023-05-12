@@ -1,11 +1,10 @@
 import SwiftUI
 
 struct Photos: View {
-    @Binding var path: NavigationPath
+    @State var path: [String]
 
     let photos = ["aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "ll", "mm"]
-    
-    // "aa"
+        
     var body: some View {
         NavigationStack(path: $path) {
             VStack {
@@ -23,6 +22,10 @@ struct Photos: View {
                     Image(systemName: "ellipsis")
                 }
             }
+        }.onChange(of: path) { newValue in
+            print("photos: path changed \(newValue)")
+        }.onAppear() {
+            print("photos init \(path)")
         }
     }
 }
@@ -37,7 +40,7 @@ struct Photos_Previews: PreviewProvider {
 
 struct PhotosDetail: View {
     @State private var isPresenting = false
-
+   
     let photoId: String
     var body: some View {
         VStack {

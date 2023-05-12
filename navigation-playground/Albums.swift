@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct Albums: View {
-    @Binding var path: NavigationPath
+    @State var path: [String]
 
     let albums = ["aa", "bb", "cc", "dd"]
     
@@ -17,7 +17,7 @@ struct Albums: View {
             }.navigationTitle("Albums")
                 .toolbar {
                     Button(action: {}) {
-                        Image(systemName: "filter")
+                        Image(systemName: "line.3.horizontal.decrease.circle.fill")
                     }
                 }
         }

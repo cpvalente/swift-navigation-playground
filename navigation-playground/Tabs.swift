@@ -12,19 +12,19 @@ enum TabItems: String, Hashable {
 
 struct Tabs: View {
     @Binding var resolver: TabItems
-    @Binding var path: NavigationPath
-
+    @State var path: [String]
+    
     var body: some View {
             TabView(selection: $resolver) {
-                Me(path: $path)
+                Me(path: path)
                     .tabItem {
                         Label("Me", systemImage: "return.left")
                     }.tag(TabItems.me)
-                Albums(path: $path)
+                Albums(path: path)
                     .tabItem {
                         Label("Albums", systemImage: "return.right")
                     }.tag(TabItems.albums)
-                Photos(path: $path)
+                Photos(path: path)
                     .tabItem {
                         Label("Photos", systemImage: "return.right")
                     }
@@ -32,7 +32,7 @@ struct Tabs: View {
                     .badge(3)
             }.onChange(of: resolver, perform: {
                 _ in
-                print(resolver)
+                print("using resolver \(resolver)")
             })
     }
 }

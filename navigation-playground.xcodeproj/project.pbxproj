@@ -20,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		076914B82A0E5C820046D958 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		076914B92A0E5D1D0046D958 /* navigation-playground.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "navigation-playground.entitlements"; sourceTree = "<group>"; };
 		07D0965029E7EE3D002E7823 /* navigation-playground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "navigation-playground.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		07D0965329E7EE3D002E7823 /* navigation_playgroundApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = navigation_playgroundApp.swift; sourceTree = "<group>"; };
 		07D0965529E7EE3D002E7823 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -63,6 +65,8 @@
 		07D0965229E7EE3D002E7823 /* navigation-playground */ = {
 			isa = PBXGroup;
 			children = (
+				076914B92A0E5D1D0046D958 /* navigation-playground.entitlements */,
+				076914B82A0E5C820046D958 /* Info.plist */,
 				07D0966329E7EE99002E7823 /* Login.swift */,
 				07D0965329E7EE3D002E7823 /* navigation_playgroundApp.swift */,
 				07D0965529E7EE3D002E7823 /* ContentView.swift */,
@@ -288,11 +292,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "navigation-playground/navigation-playground.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"navigation-playground/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "navigation-playground/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -316,11 +322,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "navigation-playground/navigation-playground.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"navigation-playground/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "navigation-playground/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

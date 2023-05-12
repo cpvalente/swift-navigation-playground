@@ -14,11 +14,3 @@ struct Login: View {
         }
     }
 }
-
-struct Login_Previews: PreviewProvider {
-    @State private var loggedIn: Bool = false
-
-    static var previews: some View {
-        Login(loggedIn: .constant(false))
-    }
-}

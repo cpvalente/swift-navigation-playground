@@ -21,13 +21,26 @@ struct ContentView_Previews: PreviewProvider {
 
 // AppRouter would receive the initial router for deeplink
 struct AppRouter: View {
-    @State var path = NavigationPath()
-    @State var resolver: TabItems = TabItems.me
+    @State var path = [String](["cc"])
+    @State var resolver: TabItems = TabItems.photos
     
-
+    init() {
+        path.append("aa")
+        print("init thing \(path)")
+    }
+    
     // albums/id
     var body: some View {
-        Tabs(resolver: $resolver, path: $path)
+        Tabs(resolver: $resolver, path: path)
+            .onAppear(perform: {
+            //path.append("bb")
+            print("append thing \(path)")
+
+        })
+            .onOpenURL { url in
+                path.removeAll()
+                path.append("dd")
+            }
     }
     
 }
