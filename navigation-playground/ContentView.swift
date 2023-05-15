@@ -1,5 +1,25 @@
 import SwiftUI
 
+
+class NavigationStore: ObservableObject {
+    @Published var path = NavigationPath()
+    @Published var resolver: TabItems = TabItems.photos
+    
+    init(initialPath: String = "", initialTab: TabItems = TabItems.photos ) {
+        self.path = NavigationPath(initialPath)
+        self.resolver = initialTab
+    }
+    
+    func append(tab: TabItems, destination: any Hashable) {
+        self.path.append(destination)
+        self.resolver = tab
+    }
+    
+    func clear() {
+        self.path = NavigationPath()
+    }
+}
+
 struct ContentView: View {
     @State private var loggedIn = false
     var body: some View {
@@ -21,26 +41,21 @@ struct ContentView_Previews: PreviewProvider {
 
 // AppRouter would receive the initial router for deeplink
 struct AppRouter: View {
-    @State var path = [String](["cc"])
-    @State var resolver: TabItems = TabItems.photos
+    @StateObject var router = NavigationStore()
     
-    init() {
-        path.append("aa")
-        print("init thing \(path)")
-    }
-    
+   
     // albums/id
     var body: some View {
-        Tabs(resolver: $resolver, path: path)
+        Tabs()
             .onAppear(perform: {
-            //path.append("bb")
-            print("append thing \(path)")
-
+            router.append(tab: TabItems.photos, destination: "bb")
+            print("append thing \(router.path)")
         })
             .onOpenURL { url in
-                path.removeAll()
-                path.append("dd")
+                router.clear()
+                router.append(tab: TabItems.albums, destination: "dd")
             }
+            .environmentObject(router)
     }
     
 }

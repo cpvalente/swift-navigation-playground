@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct Albums: View {
-    @State var path: [String]
+    @EnvironmentObject var router: NavigationStore
 
     let albums = ["aa", "bb", "cc", "dd"]
     
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $router.path) {
             VStack {
                 List(albums, id: \.self) { album in
                     NavigationLink("Detail \(album)", value: album)

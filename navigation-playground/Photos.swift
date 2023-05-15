@@ -1,12 +1,13 @@
 import SwiftUI
 
 struct Photos: View {
-    @State var path: [String]
+    @EnvironmentObject var router: NavigationStore
+    
 
     let photos = ["aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "ll", "mm"]
         
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $router.path) {
             VStack {
                 List(photos, id: \.self) { photo in
                     NavigationLink("Detail \(photo)", value: photo)
@@ -22,10 +23,10 @@ struct Photos: View {
                     Image(systemName: "ellipsis")
                 }
             }
-        }.onChange(of: path) { newValue in
+        }.onChange(of: router.path) { newValue in
             print("photos: path changed \(newValue)")
         }.onAppear() {
-            print("photos init \(path)")
+            print("photos init \(router.path)")
         }
     }
 }

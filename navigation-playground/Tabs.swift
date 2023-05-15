@@ -11,28 +11,27 @@ enum TabItems: String, Hashable {
 
 
 struct Tabs: View {
-    @Binding var resolver: TabItems
-    @State var path: [String]
-    
+    @EnvironmentObject var router: NavigationStore
+
     var body: some View {
-            TabView(selection: $resolver) {
-                Me(path: path)
+        TabView(selection: $router.resolver) {
+            Me()
                     .tabItem {
                         Label("Me", systemImage: "return.left")
                     }.tag(TabItems.me)
-                Albums(path: path)
+                Albums()
                     .tabItem {
                         Label("Albums", systemImage: "return.right")
                     }.tag(TabItems.albums)
-                Photos(path: path)
+                Photos()
                     .tabItem {
                         Label("Photos", systemImage: "return.right")
                     }
                     .tag(TabItems.photos)
                     .badge(3)
-            }.onChange(of: resolver, perform: {
+            }.onChange(of: router.resolver, perform: {
                 _ in
-                print("using resolver \(resolver)")
+                print("using resolver \(router.resolver)")
             })
     }
 }
