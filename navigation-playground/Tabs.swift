@@ -3,36 +3,33 @@ import SwiftUI
 // tab style
 // https://ondrej-kvasnovsky.medium.com/how-display-a-notification-count-badge-in-swiftui-f4fd243f557
 
-enum TabItems: String, Hashable {
+enum TabItem: String, Hashable {
     case me = "me"
     case albums = "albums"
     case photos = "photos"
 }
 
-
 struct Tabs: View {
     @EnvironmentObject var router: NavigationStore
+    @Binding var initialTab: TabItem
 
     var body: some View {
-        TabView(selection: $router.resolver) {
+        TabView(selection: $initialTab) {
             Me()
-                    .tabItem {
-                        Label("Me", systemImage: "return.left")
-                    }.tag(TabItems.me)
-                Albums()
-                    .tabItem {
-                        Label("Albums", systemImage: "return.right")
-                    }.tag(TabItems.albums)
-                Photos()
-                    .tabItem {
-                        Label("Photos", systemImage: "return.right")
-                    }
-                    .tag(TabItems.photos)
-                    .badge(3)
-            }.onChange(of: router.resolver, perform: {
-                _ in
-                print("using resolver \(router.resolver)")
-            })
+            .tabItem {
+                Label("Me", systemImage: "return.left")
+            }.tag(TabItem.me)
+            Albums()
+                .tabItem {
+                    Label("Albums", systemImage: "return.right")
+                }.tag(TabItem.albums)
+            Photos()
+                .tabItem {
+                    Label("Photos", systemImage: "return.right")
+                }
+                .tag(TabItem.photos)
+                .badge(3)
+        }
     }
 }
 

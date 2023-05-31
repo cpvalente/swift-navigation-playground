@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct Me: View {
-    @EnvironmentObject var router: NavigationStore
-    
+    @StateObject var router = NavigationStore()
+
     var body: some View {
-        NavigationStack() {
+
+        NavigationStack {
             VStack {
                 NavigationLink("Settings") {
                     Settings()
