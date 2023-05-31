@@ -1,25 +1,37 @@
 import SwiftUI
 
-struct Albums: View {
-    @EnvironmentObject var router: NavigationStore
 
-    let albums = ["aa", "bb", "cc", "dd"]
+struct Albums: View {
+    @Binding var initialPath: [any Hashable]
+    
+    @StateObject var router: NavigationStore = NavigationStore()
+
+    /*
+    init(initialPath: [any Hashable], router: NavigationStore) {
+        self.initialPath = initialPath
+        _router = StateObject(wrappedValue: NavigationStore(initialPath: initialPath)
+    }
+     */
     
     var body: some View {
+
         NavigationStack(path: $router.path) {
             VStack {
-                List(albums, id: \.self) { album in
-                    NavigationLink("Detail \(album)", value: album)
-                }.navigationDestination(for: String.self) { album in
-                    AlbumsDetail(albumId: album)
-                    
+                List(albumList) { album in
+                    NavigationLink("Detail \(album.name)", value: album)
+                }.navigationDestination(for: Album.self) { album in
+                    AlbumsDetail(album: album)
                 }
-            }.navigationTitle("Albums")
-                .toolbar {
-                    Button(action: {}) {
-                        Image(systemName: "line.3.horizontal.decrease.circle.fill")
-                    }
+            }
+            .navigationTitle("Albums")
+            .toolbar {
+                Button(action: {}) {
+                    Image(systemName: "line.3.horizontal.decrease.circle.fill")
                 }
+            }
+        }
+        .onChange(of: router.path) { newValue in
+            print("albums: path changed \(newValue)")
         }
     }
 }
@@ -32,14 +44,32 @@ struct Albums_Previews: PreviewProvider {
 }
  */
 
+let albumPhotos: [Photo] = [
+    Photo(id: "album photo 1"),
+    Photo(id: "album photo 2"),
+    Photo(id: "album photo 3"),
+    Photo(id: "album photo 4"),
+    Photo(id: "album photo 5"),
+    Photo(id: "album photo 6"),
+    Photo(id: "album photo 7"),
+    Photo(id: "album photo 8"),
+    Photo(id: "album photo 9"),
+]
+
 struct AlbumsDetail: View {
-    let albumId: String
+    let album: Album
+       
     var body: some View {
-        Text("Album Detail \(albumId)")
-            .toolbar {
-                Button(action: {}) {
-                    Image(systemName: "square.and.arrow.up.circle")
-                }
+        VStack {
+            Text("Album list \(album.name)")
+            List(albumPhotos) { photo in
+                var _ = print("destination resolves \(photo)")
+                NavigationLink("\(album.id) \(photo.id)", value: photo)
             }
+            .navigationDestination(for: Photo.self) { photo in
+                PhotosDetail(photo: photo)
+            }
+        }
+
     }
 }

@@ -1,35 +1,94 @@
 import SwiftUI
 
 
-class NavigationStore: ObservableObject {
-    @Published var path = NavigationPath()
-    @Published var resolver: TabItems = TabItems.photos
+// the protocol establishes base behaviour to be implemented
+struct Photo: Identifiable, Hashable {
+    let id: String
+}
+
+let timelinePhotos: [Photo] = [
+    Photo(id: "photo 1"),
+    Photo(id: "photo 2"),
+    Photo(id: "photo 3"),
+    Photo(id: "photo 4"),
+    Photo(id: "photo 5"),
+    Photo(id: "photo 6"),
+    Photo(id: "photo 7"),
+    Photo(id: "photo 8"),
+    Photo(id: "photo 9"),
+]
+
+struct Album: Identifiable, Hashable {
+    let id: String
+    let name: String
+}
+
+let albumList: [Album] = [
+    Album(id: "album 1", name: "Album 1"),
+    Album(id: "album 2", name: "Album 2"),
+    Album(id: "album 3", name: "Album 3"),
+    Album(id: "album 4", name: "Album 4"),
+    Album(id: "album 5", name: "Album 5"),
+    Album(id: "album 6", name: "Album 6"),
+    Album(id: "album 7", name: "Album 7"),
+    Album(id: "album 8", name: "Album 8"),
+    Album(id: "album 9", name: "Album 9"),
+]
+
+struct Carousel: Hashable {
+    let id: String
+    let photos: [String]
+}
+
+final class NavigationStore: ObservableObject {
+    @Published var path = NavigationPath() // ["albums", "photo-id", "showModal"]
     
-    init(initialPath: String = "", initialTab: TabItems = TabItems.photos ) {
-        self.path = NavigationPath(initialPath)
-        self.resolver = initialTab
+    init(initialPath: [any Hashable] = []) {
+        self.path = NavigationPath()
     }
     
-    func append(tab: TabItems, destination: any Hashable) {
+    func append(destination: any Hashable) {
         self.path.append(destination)
-        self.resolver = tab
     }
     
     func clear() {
         self.path = NavigationPath()
     }
+    
+    /**
+        Initial tab resolves the top level destination of the app considering:
+        1. The last session state
+        2. A potential deeplink
+     */
+    static func getInitialState() -> (TabItem, [any Hashable]) {
+        var initialTab: TabItem = TabItem.me
+        var initialRoute: [any Hashable] = []
+              
+        if (true) {
+            initialTab = TabItem.albums
+        }
+        
+        if (true) {
+            initialRoute.append(albumList[0])
+            initialRoute.append(Photo.init(id: albumPhotos[3].id))
+        }
+        return (initialTab, initialRoute)
+    }
 }
+
 
 struct ContentView: View {
     @State private var loggedIn = false
+    @State var initial: (tab: TabItem, path: [any Hashable]) = NavigationStore.getInitialState()
+    
     var body: some View {
-            if (loggedIn) {
-                AppRouter()
-            } else {
-                NavigationStack {
-                    Login(loggedIn: $loggedIn)
-                }
-             }
+        if (loggedIn) {
+            Tabs(initialTab: $initial.tab, initialPath: $initial.path)
+        } else {
+            NavigationStack {
+                Login(loggedIn: $loggedIn)
+            }
+         }
     }
 }
 
@@ -39,23 +98,23 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-// AppRouter would receive the initial router for deeplink
-struct AppRouter: View {
-    @StateObject var router = NavigationStore()
-    
-   
-    // albums/id
-    var body: some View {
-        Tabs()
-            .onAppear(perform: {
-            router.append(tab: TabItems.photos, destination: "bb")
-            print("append thing \(router.path)")
-        })
-            .onOpenURL { url in
-                router.clear()
-                router.append(tab: TabItems.albums, destination: "dd")
-            }
-            .environmentObject(router)
-    }
-    
-}
+/*
+ struct AppRouter: View {
+ 
+ var body: some View {
+ /*
+  .onAppear(perform: {
+  router.append(tab: TabItem.albums, destination: albumList[0])
+  router.append(tab: TabItem.albums, destination: Photo.init(id: albumPhotos[2].id))
+  print("append on router \(router.path)")
+  })
+  .onOpenURL { url in
+  router.clear()
+  router.append(tab: TabItem.albums, destination: albumList[1])
+  router.append(tab: TabItem.albums, destination: Photo.init(id: albumPhotos[3].id))
+  }
+  .environmentObject(router)
+  */
+ }
+ }
+ */

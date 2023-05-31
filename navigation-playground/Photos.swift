@@ -1,20 +1,24 @@
 import SwiftUI
 
 struct Photos: View {
-    @EnvironmentObject var router: NavigationStore
+    @Binding var initialPath: [any Hashable]
+    @StateObject var router: NavigationStore = NavigationStore()
     
-
-    let photos = ["aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "ll", "mm"]
-        
+    /*
+    init(initialPath: [any Hashable], router: NavigationStore) {
+        self.initialPath = initialRoute
+        _router = StateObject(wrappedValue: NavigationStore(initialPath: initialPath))
+    }
+     */
+           
     var body: some View {
         NavigationStack(path: $router.path) {
             VStack {
-                List(photos, id: \.self) { photo in
-                    NavigationLink("Detail \(photo)", value: photo)
-                }.navigationDestination(for: String.self) { photo in
-                    // hide tab navigation
-                    PhotosDetail(photoId: photo)
-                        .toolbar(.hidden, for: .tabBar)
+                List(timelinePhotos) { photo in
+                    var _ = print("destination resolves \(photo.id)")
+                    NavigationLink("Detail \(photo.id)", value: photo)
+                }.navigationDestination(for: Photo.self) { photo in
+                    PhotosDetail(photo: photo)
                 }
             }
             .navigationTitle("Photos")
@@ -41,16 +45,15 @@ struct Photos_Previews: PreviewProvider {
 
 struct PhotosDetail: View {
     @State private var isPresenting = false
-   
-    let photoId: String
+
+    let photo: Photo
     var body: some View {
         VStack {
-            Text("Photos Detail \(photoId)")
+            Text("Photos Detail \(photo.id)")
             Button("ShowModal") {
                 isPresenting.toggle()
             }
-        }.fullScreenCover(isPresented: $isPresenting, content: PhotosModal.init)
-    }
+        }.fullScreenCover(isPresented: $isPresenting, content: PhotosModal.init)    }
 }
 
 struct PhotosModal: View {
