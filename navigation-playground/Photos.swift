@@ -1,7 +1,15 @@
 import SwiftUI
 
 struct Photos: View {
-    @StateObject var router = NavigationStore()
+    @Binding var initialPath: [any Hashable]
+    @StateObject var router: NavigationStore = NavigationStore()
+    
+    /*
+    init(initialPath: [any Hashable], router: NavigationStore) {
+        self.initialPath = initialRoute
+        _router = StateObject(wrappedValue: NavigationStore(initialPath: initialPath))
+    }
+     */
            
     var body: some View {
         NavigationStack(path: $router.path) {

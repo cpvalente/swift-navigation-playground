@@ -2,11 +2,7 @@ import SwiftUI
 
 
 // the protocol establishes base behaviour to be implemented
-protocol Destination: Hashable {
-    var id: String {get}
-}
-
-struct Photo: Identifiable, Destination {
+struct Photo: Identifiable, Hashable {
     let id: String
 }
 
@@ -22,7 +18,7 @@ let timelinePhotos: [Photo] = [
     Photo(id: "photo 9"),
 ]
 
-struct Album: Identifiable, Destination {
+struct Album: Identifiable, Hashable {
     let id: String
     let name: String
 }
@@ -39,7 +35,7 @@ let albumList: [Album] = [
     Album(id: "album 9", name: "Album 9"),
 ]
 
-struct Carousel: Destination {
+struct Carousel: Hashable {
     let id: String
     let photos: [String]
 }
@@ -47,26 +43,47 @@ struct Carousel: Destination {
 final class NavigationStore: ObservableObject {
     @Published var path = NavigationPath() // ["albums", "photo-id", "showModal"]
     
-    init(initialPath: [any Destination] = []) {
+    init(initialPath: [any Hashable] = []) {
         self.path = NavigationPath()
     }
     
-    func append(destination: any Destination) {
+    func append(destination: any Hashable) {
         self.path.append(destination)
     }
     
     func clear() {
         self.path = NavigationPath()
     }
+    
+    /**
+        Initial tab resolves the top level destination of the app considering:
+        1. The last session state
+        2. A potential deeplink
+     */
+    static func getInitialState() -> (TabItem, [any Hashable]) {
+        var initialTab: TabItem = TabItem.me
+        var initialRoute: [any Hashable] = []
+              
+        if (true) {
+            initialTab = TabItem.albums
+        }
+        
+        if (true) {
+            initialRoute.append(albumList[0])
+            initialRoute.append(Photo.init(id: albumPhotos[3].id))
+        }
+        return (initialTab, initialRoute)
+    }
 }
+
 
 struct ContentView: View {
     @State private var loggedIn = false
-    @State var initialTab = getInitialTab()
-
+    @State var initial: (tab: TabItem, path: [any Hashable]) = NavigationStore.getInitialState()
+    
     var body: some View {
         if (loggedIn) {
-            Tabs(initialTab: $initialTab)
+            Tabs(initialTab: $initial.tab, initialPath: $initial.path)
         } else {
             NavigationStack {
                 Login(loggedIn: $loggedIn)
@@ -79,15 +96,6 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
-}
-
-/**
-    Initial tab resolves the top level destination of the app considering:
-    1. The last session state
-    2. A potential deeplink
- */
-func getInitialTab() -> TabItem {
-    return TabItem.me
 }
 
 /*

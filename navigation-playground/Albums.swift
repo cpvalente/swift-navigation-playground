@@ -2,8 +2,17 @@ import SwiftUI
 
 
 struct Albums: View {
-    @StateObject var router = NavigationStore()
+    @Binding var initialPath: [any Hashable]
+    
+    @StateObject var router: NavigationStore = NavigationStore()
 
+    /*
+    init(initialPath: [any Hashable], router: NavigationStore) {
+        self.initialPath = initialPath
+        _router = StateObject(wrappedValue: NavigationStore(initialPath: initialPath)
+    }
+     */
+    
     var body: some View {
 
         NavigationStack(path: $router.path) {

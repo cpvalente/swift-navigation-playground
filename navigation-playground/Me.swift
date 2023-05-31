@@ -1,25 +1,13 @@
 import SwiftUI
 
 struct Me: View {
+    @Binding var initialPath: [any Hashable]
     @StateObject var router = NavigationStore()
 
     var body: some View {
-
         NavigationStack {
-            VStack {
-                NavigationLink("Settings") {
-                    Settings()
-                }
-                .padding()
-                Image(systemName: "bell")
-                  .foregroundColor(Color.blue)
-                  .overlay(
-                    NotificationCountView(
-                      value: .constant(9),
-                      foreground: .white,
-                      background: .green
-                    )
-                  )
+            NavigationLink("Settings") {
+                Settings()
             }.navigationTitle("me")
                 .toolbar {
                     Button(action: {}) {
@@ -29,7 +17,6 @@ struct Me: View {
         }.onChange(of: router.path) { newValue in
             print("me: path changed \(newValue)")
         }
-
     }
 }
 
