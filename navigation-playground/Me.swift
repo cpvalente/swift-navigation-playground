@@ -1,11 +1,10 @@
 import SwiftUI
 
 struct Me: View {
-    @Binding var initialPath: [any Hashable]
-    @StateObject var router = NavigationStore()
+    @EnvironmentObject var router: NavigationStore
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $router.mePath) {
             NavigationLink("Settings") {
                 Settings()
             }.navigationTitle("me")
@@ -14,7 +13,7 @@ struct Me: View {
                         Image(systemName: "gearshape")
                     }
                 }
-        }.onChange(of: router.path) { newValue in
+        }.onChange(of: router.mePath) { newValue in
             print("me: path changed \(newValue)")
         }
     }

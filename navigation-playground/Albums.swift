@@ -2,20 +2,10 @@ import SwiftUI
 
 
 struct Albums: View {
-    @Binding var initialPath: [any Hashable]
-    
-    @StateObject var router: NavigationStore = NavigationStore()
-
-    /*
-    init(initialPath: [any Hashable], router: NavigationStore) {
-        self.initialPath = initialPath
-        _router = StateObject(wrappedValue: NavigationStore(initialPath: initialPath)
-    }
-     */
+    @EnvironmentObject var router: NavigationStore
     
     var body: some View {
-
-        NavigationStack(path: $router.path) {
+        NavigationStack(path: $router.albumPath) {
             VStack {
                 List(albumList) { album in
                     NavigationLink("Detail \(album.name)", value: album)
@@ -29,8 +19,7 @@ struct Albums: View {
                     Image(systemName: "line.3.horizontal.decrease.circle.fill")
                 }
             }
-        }
-        .onChange(of: router.path) { newValue in
+        }.onChange(of: router.albumPath) { newValue in
             print("albums: path changed \(newValue)")
         }
     }
