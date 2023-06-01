@@ -1,18 +1,10 @@
 import SwiftUI
 
 struct Photos: View {
-    @Binding var initialPath: [any Hashable]
-    @StateObject var router: NavigationStore = NavigationStore()
-    
-    /*
-    init(initialPath: [any Hashable], router: NavigationStore) {
-        self.initialPath = initialRoute
-        _router = StateObject(wrappedValue: NavigationStore(initialPath: initialPath))
-    }
-     */
-           
+    @EnvironmentObject var router: NavigationStore
+
     var body: some View {
-        NavigationStack(path: $router.path) {
+        NavigationStack(path: $router.photoPath) {
             VStack {
                 List(timelinePhotos) { photo in
                     var _ = print("destination resolves \(photo.id)")
@@ -27,10 +19,10 @@ struct Photos: View {
                     Image(systemName: "ellipsis")
                 }
             }
-        }.onChange(of: router.path) { newValue in
+        }.onChange(of: router.photoPath) { newValue in
             print("photos: path changed \(newValue)")
         }.onAppear() {
-            print("photos init \(router.path)")
+            print("photos init \(router.photoPath)")
         }
     }
 }

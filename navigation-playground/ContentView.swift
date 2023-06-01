@@ -40,50 +40,54 @@ struct Carousel: Hashable {
     let photos: [String]
 }
 
+enum PathInStore {
+    case me, photo, album, all
+}
+
 final class NavigationStore: ObservableObject {
-    @Published var path = NavigationPath() // ["albums", "photo-id", "showModal"]
+    @Published var selectedTab: TabItem = TabItem.me
+    @Published var mePath = NavigationPath()
+    @Published var photoPath = NavigationPath()
+    @Published var albumPath = NavigationPath()
     
     init(initialPath: [any Hashable] = []) {
-        self.path = NavigationPath()
-    }
-    
-    func append(destination: any Hashable) {
-        self.path.append(destination)
-    }
-    
-    func clear() {
-        self.path = NavigationPath()
-    }
-    
-    /**
-        Initial tab resolves the top level destination of the app considering:
-        1. The last session state
-        2. A potential deeplink
-     */
-    static func getInitialState() -> (TabItem, [any Hashable]) {
-        var initialTab: TabItem = TabItem.me
-        var initialRoute: [any Hashable] = []
-              
         if (true) {
-            initialTab = TabItem.albums
+            self.selectedTab = TabItem.albums
         }
         
         if (true) {
-            initialRoute.append(albumList[0])
-            initialRoute.append(Photo.init(id: albumPhotos[3].id))
+            albumPath.append(albumList[0])
+            albumPath.append(Photo.init(id: albumPhotos[3].id))
         }
-        return (initialTab, initialRoute)
+    }
+    
+    func append(path: PathInStore, destination: any Hashable) {
+        self.mePath.append(destination)
+    }
+    
+    func clear() {
+        self.mePath = NavigationPath()
+    }
+    
+    func resolveDeepLink() {
+        self.selectedTab = TabItem.photos
+        self.photoPath = NavigationPath()
+        self.photoPath.append(Photo.init(id: timelinePhotos[3].id))
     }
 }
 
 
 struct ContentView: View {
     @State private var loggedIn = false
-    @State var initial: (tab: TabItem, path: [any Hashable]) = NavigationStore.getInitialState()
-    
+    @StateObject var router = NavigationStore()
+        
     var body: some View {
         if (loggedIn) {
-            Tabs(initialTab: $initial.tab, initialPath: $initial.path)
+            Tabs()
+                .environmentObject(router)
+                .onOpenURL { url in
+                    router.resolveDeepLink()
+                }
         } else {
             NavigationStack {
                 Login(loggedIn: $loggedIn)

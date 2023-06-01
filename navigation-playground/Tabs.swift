@@ -7,27 +7,24 @@ enum TabItem: String, Hashable {
 }
 
 struct Tabs: View {
-    @Binding var initialTab: TabItem
-    @Binding var initialPath: [any Hashable]
-
+    @EnvironmentObject var router: NavigationStore
+    
     var body: some View {
-        TabView(selection: $initialTab) {
+        TabView(selection: $router.selectedTab) {
             
-            // [ Settings, Modals(modal1) ]
-
-            Me(initialPath: $initialPath)
+            Me()
                 .tabItem {
                     Label("Me", systemImage: "return.left")
                 }
                 .tag(TabItem.me)
 
-            Albums(initialPath: $initialPath)
+            Albums()
                 .tabItem {
                     Label("Albums", systemImage: "return.right")
                 }
                 .tag(TabItem.albums)
 
-            Photos(initialPath: $initialPath)
+            Photos()
                 .tabItem {
                     Label("Photos", systemImage: "return.right")
                 }
