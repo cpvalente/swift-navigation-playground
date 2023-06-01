@@ -44,13 +44,18 @@ enum PathInStore {
     case me, photo, album, all
 }
 
-final class NavigationStore: ObservableObject {
+enum RouterErrors: Error {
+    case UnhandledPath(String)
+}
+
+final class Router: ObservableObject {
     @Published var selectedTab: TabItem = TabItem.me
     @Published var mePath = NavigationPath()
     @Published var photoPath = NavigationPath()
     @Published var albumPath = NavigationPath()
     
-    init(initialPath: [any Hashable] = []) {
+    init() {
+        // router restores navigation when appropriate
         if (true) {
             self.selectedTab = TabItem.albums
         }
@@ -61,15 +66,36 @@ final class NavigationStore: ObservableObject {
         }
     }
     
-    func append(path: PathInStore, destination: any Hashable) {
-        self.mePath.append(destination)
+    func append(path: PathInStore, destination: any Hashable) throws {
+        switch path {
+            case PathInStore.me:
+                self.mePath.append(destination)
+            case PathInStore.photo:
+                self.photoPath.append(destination)
+            case PathInStore.album:
+                self.albumPath.append(destination)
+            case PathInStore.all:
+                throw RouterErrors.UnhandledPath("Cannot append to all")
+            }
     }
     
-    func clear() {
-        self.mePath = NavigationPath()
+    func clear(path: PathInStore = PathInStore.all) {
+        switch path {
+            case PathInStore.me:
+                self.mePath = NavigationPath()
+            case PathInStore.photo:
+                self.photoPath = NavigationPath()
+            case PathInStore.album:
+                self.albumPath = NavigationPath()
+            case PathInStore.all:
+                self.mePath = NavigationPath()
+                self.photoPath = NavigationPath()
+                self.albumPath = NavigationPath()
+            }
     }
     
-    func resolveDeepLink() {
+    func resolveDeepLink(url: URL) {
+        print("resolving: \(url)")
         self.selectedTab = TabItem.photos
         self.photoPath = NavigationPath()
         self.photoPath.append(Photo.init(id: timelinePhotos[3].id))
@@ -79,14 +105,14 @@ final class NavigationStore: ObservableObject {
 
 struct ContentView: View {
     @State private var loggedIn = false
-    @StateObject var router = NavigationStore()
+    @StateObject var router = Router()
         
     var body: some View {
         if (loggedIn) {
             Tabs()
                 .environmentObject(router)
                 .onOpenURL { url in
-                    router.resolveDeepLink()
+                    router.resolveDeepLink(url: url)
                 }
         } else {
             NavigationStack {
@@ -101,24 +127,3 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-
-/*
- struct AppRouter: View {
- 
- var body: some View {
- /*
-  .onAppear(perform: {
-  router.append(tab: TabItem.albums, destination: albumList[0])
-  router.append(tab: TabItem.albums, destination: Photo.init(id: albumPhotos[2].id))
-  print("append on router \(router.path)")
-  })
-  .onOpenURL { url in
-  router.clear()
-  router.append(tab: TabItem.albums, destination: albumList[1])
-  router.append(tab: TabItem.albums, destination: Photo.init(id: albumPhotos[3].id))
-  }
-  .environmentObject(router)
-  */
- }
- }
- */

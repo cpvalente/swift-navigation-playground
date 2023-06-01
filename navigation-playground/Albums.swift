@@ -2,7 +2,7 @@ import SwiftUI
 
 
 struct Albums: View {
-    @EnvironmentObject var router: NavigationStore
+    @EnvironmentObject var router: Router
     
     var body: some View {
         NavigationStack(path: $router.albumPath) {

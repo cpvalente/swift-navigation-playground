@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct Photos: View {
-    @EnvironmentObject var router: NavigationStore
+    @EnvironmentObject var router: Router
 
     var body: some View {
         NavigationStack(path: $router.photoPath) {

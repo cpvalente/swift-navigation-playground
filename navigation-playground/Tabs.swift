@@ -7,7 +7,7 @@ enum TabItem: String, Hashable {
 }
 
 struct Tabs: View {
-    @EnvironmentObject var router: NavigationStore
+    @EnvironmentObject var router: Router
     
     var body: some View {
         TabView(selection: $router.selectedTab) {
