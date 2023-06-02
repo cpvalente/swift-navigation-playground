@@ -2,15 +2,19 @@ import SwiftUI
 
 
 struct Albums: View {
-    @EnvironmentObject var router: NavigationStore
+    @EnvironmentObject var router: Router
     
     var body: some View {
         NavigationStack(path: $router.albumPath) {
             VStack {
                 List(albumList) { album in
-                    NavigationLink("Detail \(album.name)", value: album)
-                }.navigationDestination(for: Album.self) { album in
-                    AlbumsDetail(album: album)
+                    NavigationLink("Detail \(album.name)", value: Destination.album(album: album))
+                }
+                .navigationDestination(for: Destination.self) { destination in
+                    switch destination {
+                        case .album(let album): AlbumsDetail(album: album)
+                        case .photo(let photo, let showModal): PhotosDetail(photo: photo, showModal: showModal)
+                    }
                 }
             }
             .navigationTitle("Albums")
@@ -53,10 +57,7 @@ struct AlbumsDetail: View {
             Text("Album list \(album.name)")
             List(albumPhotos) { photo in
                 var _ = print("destination resolves \(photo)")
-                NavigationLink("\(album.id) \(photo.id)", value: photo)
-            }
-            .navigationDestination(for: Photo.self) { photo in
-                PhotosDetail(photo: photo)
+                NavigationLink("\(album.id) \(photo.id)", value: Destination.photo(photo: photo))
             }
         }
 

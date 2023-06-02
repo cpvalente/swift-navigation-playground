@@ -1,16 +1,19 @@
 import SwiftUI
 
 struct Photos: View {
-    @EnvironmentObject var router: NavigationStore
+    @EnvironmentObject var router: Router
 
     var body: some View {
         NavigationStack(path: $router.photoPath) {
             VStack {
                 List(timelinePhotos) { photo in
                     var _ = print("destination resolves \(photo.id)")
-                    NavigationLink("Detail \(photo.id)", value: photo)
-                }.navigationDestination(for: Photo.self) { photo in
-                    PhotosDetail(photo: photo)
+                    NavigationLink("Detail \(photo.id)", value: Destination.photo(photo: photo))
+                }.navigationDestination(for: Destination.self) { destination in
+                    switch destination {
+                        case .album(let album): AlbumsDetail(album: album)
+                        case .photo(let photo, let showModal): PhotosDetail(photo: photo, showModal: showModal)
+                    }
                 }
             }
             .navigationTitle("Photos")
@@ -36,9 +39,17 @@ struct Photos_Previews: PreviewProvider {
 */
 
 struct PhotosDetail: View {
-    @State private var isPresenting = false
-
     let photo: Photo
+    let showModal: Bool
+    
+    @State private var isPresenting: Bool
+    
+    init(photo: Photo, showModal: Bool = false) {
+        self.photo = photo
+        self.showModal = showModal
+        self.isPresenting = showModal
+    }
+
     var body: some View {
         VStack {
             Text("Photos Detail \(photo.id)")
