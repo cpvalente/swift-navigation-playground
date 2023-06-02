@@ -1,3 +1,6 @@
+/* see https://github.com/tunds/SwiftUI-Navigation-Multiplatform-Example/blob/main/Project/Introduction%20to%20NavigationStack/Route.swift
+*/
+
 import SwiftUI
 
 
@@ -41,8 +44,41 @@ struct Carousel: Hashable {
 }
 
 enum PathInStore {
-    case me, photo, album, all
+    case me
+    case photo
+    case album
 }
+
+enum Destination {
+    case photo(photo: Photo)
+    case album(album: Album)
+}
+
+extension Destination: Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.hashValue)
+    }
+    
+    static func == (lhs: Destination, rhs: Destination) -> Bool {
+        switch (lhs, rhs) {
+        case(.photo(let lhs), .photo(let rhs)):
+            return lhs.id == rhs.id
+        case(.album(let lhs), .album(let rhs)):
+            return lhs.id == rhs.id
+        default:
+            return false
+        }
+    }
+}
+
+// dictionary of known destinations
+let destinations: [String: (TabItem, [Destination])] = [
+    "capture-app://t": (TabItem.albums, [
+        Destination.album(album: albumList[0]),
+        Destination.photo(photo: albumPhotos[0])
+    ])
+]
+
 
 enum RouterErrors: Error {
     case UnhandledPath(String)
@@ -50,55 +86,69 @@ enum RouterErrors: Error {
 
 final class Router: ObservableObject {
     @Published var selectedTab: TabItem = TabItem.me
-    @Published var mePath = NavigationPath()
-    @Published var photoPath = NavigationPath()
-    @Published var albumPath = NavigationPath()
+    @Published var mePath: [Destination]
+    @Published var photoPath: [Destination]
+    @Published var albumPath: [Destination]
     
     init() {
+        self.mePath = []
+        self.photoPath = []
+        self.albumPath = []
+        
         // router restores navigation when appropriate
         if (true) {
             self.selectedTab = TabItem.albums
         }
         
         if (true) {
-            albumPath.append(albumList[0])
-            albumPath.append(Photo.init(id: albumPhotos[3].id))
+            self.albumPath.append(Destination.album(album: albumList[1]))
+            self.albumPath.append(Destination.photo(photo: albumPhotos[3]))
         }
     }
     
-    func append(path: PathInStore, destination: any Hashable) throws {
-        switch path {
-            case PathInStore.me:
-                self.mePath.append(destination)
-            case PathInStore.photo:
-                self.photoPath.append(destination)
-            case PathInStore.album:
-                self.albumPath.append(destination)
-            case PathInStore.all:
-                throw RouterErrors.UnhandledPath("Cannot append to all")
+    func append(tabRouter: TabItem, destination: Destination) {
+        switch tabRouter {
+        case TabItem.me:
+            self.mePath.append(destination)
+        case TabItem.photos:
+            self.photoPath.append(destination)
+        case TabItem.albums:
+            self.albumPath.append(destination)
+        }
+    }
+    
+    func replace(tabRouter: TabItem, destination: [Destination]) {
+        print("replace \(tabRouter) \(destination)")
+        switch tabRouter {
+            case TabItem.me:
+                self.mePath = destination
+            case TabItem.photos:
+                self.photoPath = destination
+            case TabItem.albums:
+                self.albumPath = destination
             }
     }
     
-    func clear(path: PathInStore = PathInStore.all) {
-        switch path {
-            case PathInStore.me:
-                self.mePath = NavigationPath()
-            case PathInStore.photo:
-                self.photoPath = NavigationPath()
-            case PathInStore.album:
-                self.albumPath = NavigationPath()
-            case PathInStore.all:
-                self.mePath = NavigationPath()
-                self.photoPath = NavigationPath()
-                self.albumPath = NavigationPath()
+    func clear(tabRouter: TabItem) {
+        switch tabRouter {
+            case TabItem.me:
+                self.mePath = []
+            case TabItem.photos:
+                self.photoPath = []
+            case TabItem.albums:
+                self.albumPath = []
             }
     }
     
     func resolveDeepLink(url: URL) {
         print("resolving: \(url)")
-        self.selectedTab = TabItem.photos
-        self.photoPath = NavigationPath()
-        self.photoPath.append(Photo.init(id: timelinePhotos[3].id))
+        
+        let parsedURL = url.absoluteString
+        if let (tab, path) = destinations[parsedURL] {
+            print("resolved deep link \(tab) \(path)")
+            self.selectedTab = tab
+            self.replace(tabRouter: selectedTab, destination: path)
+        }
     }
 }
 

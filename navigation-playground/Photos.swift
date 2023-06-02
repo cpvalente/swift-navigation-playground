@@ -8,9 +8,12 @@ struct Photos: View {
             VStack {
                 List(timelinePhotos) { photo in
                     var _ = print("destination resolves \(photo.id)")
-                    NavigationLink("Detail \(photo.id)", value: photo)
-                }.navigationDestination(for: Photo.self) { photo in
-                    PhotosDetail(photo: photo)
+                    NavigationLink("Detail \(photo.id)", value: Destination.photo(photo: photo))
+                }.navigationDestination(for: Destination.self) { destination in
+                    switch destination {
+                        case .album(let album): AlbumsDetail(album: album)
+                        case .photo(let photo): PhotosDetail(photo: photo)
+                    }
                 }
             }
             .navigationTitle("Photos")
