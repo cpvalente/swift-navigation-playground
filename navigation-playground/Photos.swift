@@ -12,7 +12,7 @@ struct Photos: View {
                 }.navigationDestination(for: Destination.self) { destination in
                     switch destination {
                         case .album(let album): AlbumsDetail(album: album)
-                        case .photo(let photo): PhotosDetail(photo: photo)
+                        case .photo(let photo, let showModal): PhotosDetail(photo: photo, showModal: showModal)
                     }
                 }
             }
@@ -39,9 +39,17 @@ struct Photos_Previews: PreviewProvider {
 */
 
 struct PhotosDetail: View {
-    @State private var isPresenting = false
-
     let photo: Photo
+    let showModal: Bool
+    
+    @State private var isPresenting: Bool
+    
+    init(photo: Photo, showModal: Bool = false) {
+        self.photo = photo
+        self.showModal = showModal
+        self.isPresenting = showModal
+    }
+
     var body: some View {
         VStack {
             Text("Photos Detail \(photo.id)")

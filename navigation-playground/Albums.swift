@@ -13,7 +13,7 @@ struct Albums: View {
                 .navigationDestination(for: Destination.self) { destination in
                     switch destination {
                         case .album(let album): AlbumsDetail(album: album)
-                        case .photo(let photo): PhotosDetail(photo: photo)
+                        case .photo(let photo, let showModal): PhotosDetail(photo: photo, showModal: showModal)
                     }
                 }
             }

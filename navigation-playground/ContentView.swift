@@ -38,19 +38,8 @@ let albumList: [Album] = [
     Album(id: "album 9", name: "Album 9"),
 ]
 
-struct Carousel: Hashable {
-    let id: String
-    let photos: [String]
-}
-
-enum PathInStore {
-    case me
-    case photo
-    case album
-}
-
 enum Destination {
-    case photo(photo: Photo)
+    case photo(photo: Photo, showModal: Bool = false)
     case album(album: Album)
 }
 
@@ -61,7 +50,7 @@ extension Destination: Hashable {
     
     static func == (lhs: Destination, rhs: Destination) -> Bool {
         switch (lhs, rhs) {
-        case(.photo(let lhs), .photo(let rhs)):
+        case(.photo(let lhs, _), .photo(let rhs, _)):
             return lhs.id == rhs.id
         case(.album(let lhs), .album(let rhs)):
             return lhs.id == rhs.id
@@ -75,7 +64,7 @@ extension Destination: Hashable {
 let destinations: [String: (TabItem, [Destination])] = [
     "capture-app://t": (TabItem.albums, [
         Destination.album(album: albumList[0]),
-        Destination.photo(photo: albumPhotos[0])
+        Destination.photo(photo: albumPhotos[0], showModal: true)
     ])
 ]
 
